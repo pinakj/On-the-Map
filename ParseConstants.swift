@@ -13,9 +13,9 @@ import UIKit
 extension ParseClient{
     
     struct Keys {
-        static let objectID = "objectID"
+        static let objectID:String = "objectId"
         static let uniqueKey = "uniqueKey"
-        static let firstname = "firstName"
+        static let firstname:String = "firstName"
         static let lastname = "lastName"
         static let mapString = "mapString"
         static let mediaURL = "mediaURL"

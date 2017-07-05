@@ -13,9 +13,9 @@ import UIKit
 class ParseClient:NSObject{
     
     let sharedURLSession = URLSession.shared
+    var studentInfo: [StudentLocation]? = []
     
-    
-    func taskforGETMethod(_ method:String, completionhandlerforGET:@escaping(_ studentData:Data?,_ error:NSError?) -> Void) -> URLSessionTask
+    func taskforGETMethod(_ method:String, completionhandlerforGET:@escaping(_ studentData:[StudentLocation],_ error:String?,_ success: Bool?) -> Void) -> URLSessionTask
     {
         let url = URL(string: (ParseClient.Constants.baseURL + method))
         var request = URLRequest(url: url!)
@@ -26,8 +26,19 @@ class ParseClient:NSObject{
             if error != nil { // Handle error...
                 return
             }
-            print(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
-            
+            var parsedResult: AnyObject!
+            do
+            {
+                try parsedResult = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as AnyObject
+            }
+            catch
+            {
+                completionhandlerforGET( [], "Error received in JSON!", false)
+                
+            }
+            let resultsArray = parsedResult["results"] as! [[String:AnyObject]]
+            completionhandlerforGET(StudentLocation.converttoStudentLocation(results: resultsArray),nil, true)
+                
         }
         task.resume()
         return task

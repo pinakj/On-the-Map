@@ -49,7 +49,6 @@ class UdacityClient: NSObject {
                 sendError("Couldn't find newData.")
                 return
             }
-            print(newData)
             var parsedResult:AnyObject!
             do
             {

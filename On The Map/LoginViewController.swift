@@ -54,7 +54,7 @@ class LoginViewController: UIViewController {
     
     private func completeLogin()
     {
-        let vc = self.storyboard!.instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
+        let vc = self.storyboard!.instantiateViewController(withIdentifier: "TabBarViewController") as! TabBarViewController
         present(vc, animated: true, completion: nil)
     }
     

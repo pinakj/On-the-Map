@@ -24,20 +24,29 @@ class StudentLocation{
     var updatedAt:String!
     
     
-    init(_ dictionary:[String:AnyObject])
+    init(dict: [String : AnyObject])
     {
-        var dictionary = dictionary
-        dictionary[ParseClient.Keys.objectID] = objectID as AnyObject
-        dictionary[ParseClient.Keys.uniqueKey] = uniqueKey as AnyObject
-        dictionary[ParseClient.Keys.firstname] = firstName as AnyObject
-        dictionary[ParseClient.Keys.lastname] = lastName as AnyObject
-        dictionary[ParseClient.Keys.mapString] = mapString as AnyObject
-        dictionary[ParseClient.Keys.mediaURL] = mediaURL as AnyObject
-        dictionary[ParseClient.Keys.latitude] = latitude as AnyObject
-        dictionary[ParseClient.Keys.longitude] = longitude as AnyObject
-        dictionary[ParseClient.Keys.createdAt] = createdAt as AnyObject
-        dictionary[ParseClient.Keys.updatedAt] = updatedAt as AnyObject
+        var dictionary = dict
         
+        firstName = dictionary[ParseClient.Keys.firstname] != nil ? dictionary[ParseClient.Keys.firstname] as! String: ""
+        lastName = dictionary[ParseClient.Keys.lastname] != nil ? dictionary[ParseClient.Keys.lastname] as! String: ""
+        latitude = dictionary[ParseClient.Keys.latitude] != nil ? dictionary[ParseClient.Keys.latitude] as! Float: 0.0
+        longitude = dictionary[ParseClient.Keys.longitude] != nil ? dictionary[ParseClient.Keys.longitude] as! Float: 0.0
+        mapString = dictionary[ParseClient.Keys.mapString] != nil ? dictionary[ParseClient.Keys.mapString] as! String: ""
+        mediaURL = dictionary[ParseClient.Keys.mediaURL] != nil ? dictionary[ParseClient.Keys.mediaURL] as! String: ""
+        objectID = dictionary[ParseClient.Keys.objectID] != nil ? dictionary[ParseClient.Keys.objectID] as! String: ""
+        uniqueKey = dictionary[ParseClient.Keys.uniqueKey] != nil ? dictionary[ParseClient.Keys.uniqueKey] as! String: ""
+        updatedAt = dictionary[ParseClient.Keys.updatedAt] != nil ? dictionary[ParseClient.Keys.updatedAt] as! String: ""
+    }
+    
+    static func converttoStudentLocation(results:[[String:AnyObject]]) -> [StudentLocation]
+    {
+        var studentLocations = [StudentLocation]()
+        for result in results
+        {
+            studentLocations.append(StudentLocation(dict: result))
+        }
+        return studentLocations
     }
     
 }

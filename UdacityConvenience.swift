@@ -43,7 +43,6 @@ extension UdacityClient{
             {
                 let session = result?["session"] as! [String:AnyObject]
                 self.sessionID = session["id"] as? String
-                print(self.sessionID!)
                 completionhandlerforSession(true,self.sessionID,nil)
             }
         }
