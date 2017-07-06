@@ -104,11 +104,6 @@ extension LoginViewController:UITextFieldDelegate{
         }
     }
     
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        textField.text = ""
-        return true
-    }
-    
     func resignIfFirstResponder()
     {
         activeTextField.resignFirstResponder()
@@ -123,7 +118,7 @@ extension LoginViewController:UITextFieldDelegate{
     {
         if(!keyboardOnScreen)
         {
-            view.frame.origin.y -= getKeyboardHeight(notification)
+            //view.frame.origin.y -= getKeyboardHeight(notification)
         }
     }
     
@@ -141,7 +136,7 @@ extension LoginViewController:UITextFieldDelegate{
     {
         if keyboardOnScreen
         {
-            view.frame.origin.y += getKeyboardHeight(notification)
+            //view.frame.origin.y += getKeyboardHeight(notification)
         }
     }
     
