@@ -20,11 +20,18 @@ class InfoPostingViewController: UIViewController, MKMapViewDelegate{
     @IBOutlet var imageView:UIImageView!
     @IBOutlet var cancelButton:UIButton!
     @IBOutlet var mapView:MKMapView!
+    @IBOutlet var mediaURL:UITextField!
+    @IBOutlet var upperImageView:UIImageView!
+    @IBOutlet var submitButton:UIButton!
     lazy var geocoder =  CLGeocoder()
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        upperImageView.isHidden = true
+        mediaURL.isHidden = true
+        submitButton.isHidden = true
         mapView.delegate = self
         mapView.isHidden = true
 
@@ -43,12 +50,37 @@ class InfoPostingViewController: UIViewController, MKMapViewDelegate{
     
     @IBAction func cancelButtonPressed()
     {
+        print("Cancel pressed")
         DispatchQueue.main.async {
             
         
         self.dismiss(animated: true, completion: nil)
         }
     }
+    
+    @IBAction func submitButtonPressed()
+    {
+        UdacityClient.sharedInstance().mediaURL = mediaURL.text!
+        UdacityClient.sharedInstance().mapString = addresstextField.text!
+        //Call the method
+        let parameters:[String:AnyObject] = ([UdacityClient.Methods.uniqueKey:UdacityClient.sharedInstance().userID, UdacityClient.Methods.firstName:UdacityClient.sharedInstance().firstName,UdacityClient.Methods.lastName:UdacityClient.sharedInstance().lastName,UdacityClient.Methods.mapString:UdacityClient.sharedInstance().mapString,UdacityClient.Methods.mediaURL:UdacityClient.sharedInstance().mediaURL,UdacityClient.Methods.lat:UdacityClient.sharedInstance().latitude,UdacityClient.Methods.long:UdacityClient.sharedInstance().longitude] as AnyObject) as! [String : AnyObject]
+        ParseClient.sharedInstance().poststudentLocation(parameters: parameters) {(success,error) in
+            
+            if(success)
+            {
+                print("Posted student data")
+                self.dismiss(animated: true, completion: nil)
+                self.refreshData()
+                
+            }
+            else
+            {
+                print(error)
+            }
+        }
+    }
+    
+
     func setUIEnabled(_ bool: Bool?)
     {
         if(bool == false)
@@ -60,6 +92,9 @@ class InfoPostingViewController: UIViewController, MKMapViewDelegate{
             onthemapButton.isHidden = true
             imageView.isHidden = true
             mapView.isHidden = false
+            upperImageView.isHidden = false
+            mediaURL.isHidden = false
+            submitButton.isHidden = false
         }
     }
 
@@ -86,6 +121,11 @@ class InfoPostingViewController: UIViewController, MKMapViewDelegate{
                 let mapCoord = CLLocationCoordinate2D(latitude: lat, longitude: long)
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = mapCoord
+                
+                var span = MKCoordinateSpanMake(100, 100)
+                var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: lat, longitude: long), span: span)
+                self.mapView.setRegion(region, animated: true)
+                
                 annotations.append(annotation)
                 self.mapView.addAnnotations(annotations)
                 setUIEnabled(false)
@@ -115,7 +155,14 @@ class InfoPostingViewController: UIViewController, MKMapViewDelegate{
         
         return pinView
     }
-    
-
-
 }
+
+extension UIViewController
+{
+    func refreshData()
+    {
+        ParseClient.sharedInstance().studentInfo = nil
+    }
+}
+
+

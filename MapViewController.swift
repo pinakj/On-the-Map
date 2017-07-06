@@ -18,7 +18,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         mapView.delegate = self
         
-        self.initialSetup()
         // Do any additional setup after loading the view.
     }
 
@@ -27,9 +26,16 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.initialSetup()
+        print("ViewWIllAppear called")
+    }
     
-    private func initialSetup()
+    
+    func initialSetup()
     {
+        print("Called")
         ParseClient.sharedInstance().getstudentLocations(){ (success, errorString, studentData) in
             if success
             {
@@ -43,7 +49,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    private func addPins(studentData:[StudentLocation]?)
+    
+    func addPins(studentData:[StudentLocation]?)
     {
         let locations = studentData
         var annotations = [MKPointAnnotation]()
@@ -54,6 +61,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             // This is a version of the Double type.
             let lat = CLLocationDegrees(dictionary.latitude!)
             let long = CLLocationDegrees(dictionary.longitude!)
+            
+            UdacityClient.sharedInstance().latitude = Double((dictionary.latitude)!)
+            UdacityClient.sharedInstance().longitude = Double((dictionary.longitude)!)
             
             // The lat and long are used to create a CLLocationCoordinates2D instance.
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
@@ -73,8 +83,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             annotations.append(annotation)
         }
         
-        // When the array is complete, we add the annotations to the map.
-        self.mapView.addAnnotations(annotations)
+        DispatchQueue.main.async{
+            // When the array is complete, we add the annotations to the map.
+            self.mapView.addAnnotations(annotations)
+
+        }
+        
 
     }
     

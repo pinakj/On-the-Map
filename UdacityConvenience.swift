@@ -11,11 +11,13 @@ import UIKit
 
 extension UdacityClient{
     func authenticateWithViewController(_ hostViewController: UIViewController,userCreds:[String:[String:AnyObject]], completionHandlerForAuth: @escaping (_ success: Bool, _ errorString: String?) -> Void) {
-        getsessionID(userCreds: userCreds){(success, sessionID,errorString) in
+        getsessionID(userCreds: userCreds){(success, sessionID,userID,errorString) in
             
             if success
             {
+                self.userID = userID
                 self.sessionID = sessionID
+                print("User ID", userID)
                 completionHandlerForAuth(success, nil)
             }
             else
@@ -26,26 +28,42 @@ extension UdacityClient{
         }
     }
     
-    func getsessionID(userCreds:[String:[String:AnyObject]],completionhandlerforSession: @escaping (_ success: Bool,_ sessionID: String?, _ errorString: String?) -> Void)
+    func getsessionID(userCreds:[String:[String:AnyObject]],completionhandlerforSession: @escaping (_ success: Bool,_ sessionID: String?,_ userID:String, _ errorString: String?) -> Void)
     {
-        //TO DO:Construct the JSON body and pass in the method. The result method should have the result
-        
-        let jsonBody:String = "{\"udacity\": {\"username\": \"\(String(describing: UdacityClient.Constants.username))\", \"password\": \"\(String(describing: UdacityClient.Constants.password))\"}}"
 
-        self.taskforPOSTMethod(userCreds,UdacityClient.Methods.newSessionWithAPI, jsonBody: jsonBody){(result, error) in
+        self.taskforPOSTMethod(userCreds,UdacityClient.Methods.newSessionWithAPI){(result, error) in
             
             if error != nil
             {
-                completionhandlerforSession(false,nil,"Error while trying to execute the post method")
+                completionhandlerforSession(false, "", "", "Error while trying to execute the post method")
             }
             
             else
             {
                 let session = result?["session"] as! [String:AnyObject]
                 self.sessionID = session["id"] as? String
-                completionhandlerforSession(true,self.sessionID,nil)
+                
+                let account = result?["account"] as! [String:AnyObject]
+                self.userID = (account["key"] as? String)!
+                
+                completionhandlerforSession(true,self.sessionID,self.userID,nil)
             }
         }
+    }
+    
+    func getuserData()
+    {
+        let updatedMethod = UdacityClient.Methods.getuserID.replacingOccurrences(of: "id", with: "\(self.userID)")
+        taskforGETMethod(updatedMethod){ (success, error) in
+            if success!
+            {
+                print("Success in getting user name and last name")
+            }
+            else
+            {
+                print("Error in getting user name and last name")
+            }
+    }
     }
     
 }

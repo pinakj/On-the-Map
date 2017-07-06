@@ -44,9 +44,30 @@ class ParseClient:NSObject{
         return task
     }
     
-    func taskforPOSTMethod()
+    func taskforPOSTMethod(_ method:String,_ parameters:[String:AnyObject], completionhandlerforPOST:@escaping(_ error:String?,_ success: Bool?) -> Void) -> URLSessionTask
     {
-        
+        let url = URL(string: (ParseClient.Constants.baseURL + method))
+        var request = URLRequest(url: url!)
+        request.httpMethod = "POST"
+        request.addValue(ParseClient.Constants.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.addValue(ParseClient.Constants.applicationID, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+
+        do
+        {
+            request.httpBody = try! JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        }
+
+        let task = sharedURLSession.dataTask(with: request as URLRequest) { data, response, error in
+            if error != nil { // Handle error…
+                return
+            }
+            print(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
+            completionhandlerforPOST(nil, true)
+        }
+        task.resume()
+        return task
     }
     
     func taskforPUTMethod()

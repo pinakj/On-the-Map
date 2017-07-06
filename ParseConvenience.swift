@@ -25,7 +25,21 @@ extension ParseClient{
                 completionhandlerforSession(true,nil, studentData)
             }
     }
+    }
 
-    
-}
+        func poststudentLocation(parameters:[String:AnyObject],completionhandlerforSession: @escaping(_ success:Bool, _ errorString:String?)-> Void)
+        {
+            ParseClient.sharedInstance().taskforPOSTMethod(ParseClient.Methods.studentLocation, parameters){(error,success) in
+                
+                if(success)!
+                {
+                    print("successssss")
+                    completionhandlerforSession(true, nil)
+                }
+                
+            
+            }
+            
+        }
+
 }

@@ -54,8 +54,13 @@ class LoginViewController: UIViewController {
     
     private func completeLogin()
     {
-        let vc = self.storyboard!.instantiateViewController(withIdentifier: "TabBarViewController") as! TabBarViewController
-        present(vc, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            let vc = self.storyboard!.instantiateViewController(withIdentifier: "TabBarViewController") as! UITabBarController
+            self.present(vc, animated: true, completion: nil)
+            return
+        }
+
+        UdacityClient.sharedInstance().getuserData()
     }
     
     @IBAction func isSignInPressed()
